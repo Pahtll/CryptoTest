@@ -1,0 +1,25 @@
+﻿version: '3'
+services:
+  cryptotest:
+    image: cryptotest
+    build:
+      context: .
+      dockerfile: CryptoTest.API/Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=postgres;Database=CryptoTestApiDb;Username=postgres;Password=TestPassword144"
+    ports:
+      - "5290:8080"
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: "CryptoTestApiDb"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "TestPassword144"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres-data:
