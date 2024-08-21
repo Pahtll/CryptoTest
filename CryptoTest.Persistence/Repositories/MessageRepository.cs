@@ -11,7 +11,18 @@ public class MessageRepository(SqlDatabase sqlDatabase)
     {
         await using var connection = sqlDatabase.GetConnection();
         await connection.OpenAsync();
+        
+        if(connection.State != ConnectionState.Open)
+        {
+            throw new Exception("Connection is not open");
+        }
+        
+        var createTableCommand = connection.CreateCommand();
+        createTableCommand.CommandText = 
+            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Content NVARCHAR(128), CreatedAt DATETIME)";
 
+        await createTableCommand.ExecuteNonQueryAsync();
+        
         var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM Messages";
 
@@ -34,6 +45,17 @@ public class MessageRepository(SqlDatabase sqlDatabase)
     {
         await using var connection = sqlDatabase.GetConnection();
         await connection.OpenAsync();
+        
+        if(connection.State != ConnectionState.Open)
+        {
+            throw new Exception("Connection is not open");
+        }
+        
+        var createTableCommand = connection.CreateCommand();
+        createTableCommand.CommandText = 
+            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Content NVARCHAR(128), CreatedAt DATETIME)";
+        
+        await createTableCommand.ExecuteNonQueryAsync();
 
         var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM Messages WHERE Id = @Id";
@@ -52,11 +74,57 @@ public class MessageRepository(SqlDatabase sqlDatabase)
 
         throw new ArgumentException("Message not found");
     }
+    
+    public async Task<List<Message>> GetAllMessagesSince(DateTime since)
+    {
+        await using var connection = sqlDatabase.GetConnection();
+        await connection.OpenAsync();
+        
+        if(connection.State != ConnectionState.Open)
+        {
+            throw new Exception("Connection is not open");
+        }
+        
+        var createTableCommand = connection.CreateCommand();
+        createTableCommand.CommandText = 
+            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Content NVARCHAR(128), CreatedAt DATETIME)";
+        
+        await createTableCommand.ExecuteNonQueryAsync();
+
+        var command = connection.CreateCommand();
+        command.CommandText = "SELECT * FROM Messages WHERE CreatedAt >= @Since";
+        command.Parameters.Add(new SqlParameter("@Since", SqlDbType.DateTime) { Value = since });
+
+        var messages = new List<Message>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            messages.Add(new Message
+            {
+                Id = reader.GetInt32(0),
+                Text = reader.GetString(1),
+                SentAt = reader.GetDateTime(2)
+            });
+        }
+
+        return messages;
+    }
 
     public async Task CreateMessage(Message message)
     {
         await using var connection = sqlDatabase.GetConnection();
         await connection.OpenAsync();
+        
+        if(connection.State != ConnectionState.Open)
+        {
+            throw new Exception("Connection is not open");
+        }
+        
+        var createTableCommand = connection.CreateCommand();
+        createTableCommand.CommandText = 
+            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Content NVARCHAR(128), CreatedAt DATETIME)";
+        
+        await createTableCommand.ExecuteNonQueryAsync();
 
         var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO Messages (Content, CreatedAt) VALUES (@Content, @CreatedAt)";
@@ -65,6 +133,4 @@ public class MessageRepository(SqlDatabase sqlDatabase)
 
         await command.ExecuteNonQueryAsync();
     }
-
-    
 }
