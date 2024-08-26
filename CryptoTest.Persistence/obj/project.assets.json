@@ -1417,6 +1417,7 @@
           "Microsoft.EntityFrameworkCore.Analyzers": "8.0.8",
           "Microsoft.EntityFrameworkCore.Relational": "8.0.8",
           "Microsoft.Extensions.Logging": "8.0.0",
+          "Npgsql": "8.0.3",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.4"
         },
         "compile": {
@@ -3863,6 +3864,7 @@
       "Microsoft.EntityFrameworkCore.Relational >= 8.0.8",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.8",
       "Microsoft.Extensions.Logging >= 8.0.0",
+      "Npgsql >= 8.0.3",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 8.0.4"
     ]
   },
@@ -3947,6 +3949,10 @@
           "Microsoft.Extensions.Logging": {
             "target": "Package",
             "version": "[8.0.0, )"
+          },
+          "Npgsql": {
+            "target": "Package",
+            "version": "[8.0.3, )"
           },
           "Npgsql.EntityFrameworkCore.PostgreSQL": {
             "target": "Package",

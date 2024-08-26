@@ -3,6 +3,7 @@ using CryptoTest.Domain.Models;
 using CryptoTest.Persistence.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 
 namespace CryptoTest.Persistence.Repositories;
 
@@ -25,7 +26,7 @@ public class MessageRepository(
         
         var createTableCommand = connection.CreateCommand();
         createTableCommand.CommandText = 
-            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Text NVARCHAR(128), SentAt DATETIME)";
+            "CREATE TABLE IF NOT EXISTS Messages (Id SERIAL PRIMARY KEY, Text VARCHAR(128), SentAt TIMESTAMP)";
 
         await createTableCommand.ExecuteNonQueryAsync();
         
@@ -61,7 +62,7 @@ public class MessageRepository(
         
         var createTableCommand = connection.CreateCommand();
         createTableCommand.CommandText = 
-            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Text NVARCHAR(128), SentAt DATETIME)";
+            "CREATE TABLE IF NOT EXISTS Messages (Id SERIAL PRIMARY KEY, Text VARCHAR(128), SentAt TIMESTAMP)";
         
         await createTableCommand.ExecuteNonQueryAsync();
 
@@ -83,7 +84,7 @@ public class MessageRepository(
         throw new ArgumentException("Message not found");
     }
     
-    public async Task<IEnumerable<Message>> GetAllMessagesSince(DateTime since)
+    public async Task<IEnumerable<Message>> GetAllMessagesSince(DateTime since, DateTime until)
     {
         await using var connection = sqlDatabase.GetConnection();
         await connection.OpenAsync();
@@ -98,14 +99,15 @@ public class MessageRepository(
         
         var createTableCommand = connection.CreateCommand();
         createTableCommand.CommandText = 
-            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Text NVARCHAR(128), SentAt DATETIME)";
+            "CREATE TABLE IF NOT EXISTS Messages (Id SERIAL PRIMARY KEY, Text VARCHAR(128), SentAt TIMESTAMP)";
         
         await createTableCommand.ExecuteNonQueryAsync();
-
+        
         var command = connection.CreateCommand();
-        command.CommandText = "SELECT * FROM Messages WHERE CreatedAt >= @Since";
+        command.CommandText = "SELECT * FROM Messages WHERE SentAt >= @Since AND SentAt <= @Until";
         command.Parameters.Add(new SqlParameter("@Since", SqlDbType.DateTime) { Value = since });
-
+        command.Parameters.Add(new SqlParameter("@Until", SqlDbType.DateTime) { Value = until });
+        
         var messages = new List<Message>();
         await using var reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())
@@ -117,7 +119,7 @@ public class MessageRepository(
                 SentAt = reader.GetDateTime(2)
             });
         }
-
+        
         return messages;
     }
 
@@ -133,7 +135,7 @@ public class MessageRepository(
         
         var createTableCommand = connection.CreateCommand();
         createTableCommand.CommandText = 
-            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Text NVARCHAR(128), SentAt DATETIME)";
+            "CREATE TABLE IF NOT EXISTS Messages (Id SERIAL PRIMARY KEY IDENTITY, Text VARCHAR(128), SentAt TIMESTAMP)";
         
         await createTableCommand.ExecuteNonQueryAsync();
 

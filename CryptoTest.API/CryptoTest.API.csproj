@@ -24,7 +24,9 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.8" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+        <PackageReference Include="Npgsql" Version="8.0.3" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
     </ItemGroup>
@@ -36,12 +38,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Endpoints\" />
-      <Folder Include="Extensions\" />
-      <Folder Include="Traits\" />
-    </ItemGroup>
-
-    <ItemGroup>
+      <ProjectReference Include="..\CryptoTest.Application\CryptoTest.Application.csproj" />
       <ProjectReference Include="..\CryptoTest.Persistence\CryptoTest.Persistence.csproj" />
     </ItemGroup>
 

@@ -1,16 +1,16 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using Npgsql;
 
 
 namespace CryptoTest.Persistence;
 
-public class SqlDatabase(string? connectionString)
+public class SqlDatabase(IConfiguration configuration)
 {
-    private readonly string _connectionString = connectionString 
-                                                ?? throw new ArgumentNullException(nameof(connectionString));
-    
-    public SqlConnection GetConnection()
+    private readonly string? _connection = configuration.GetConnectionString("DefaultConnection");
+
+    public NpgsqlConnection GetConnection()
     {
-        return new SqlConnection(_connectionString);
+        return new NpgsqlConnection(_connection);
     }
 }

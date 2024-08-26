@@ -1,11 +1,11 @@
 using CryptoTest.Domain.Models;
 
-namespace CryptoTest.Application.Services;
+namespace CryptoTest.Application.Interfaces;
 
 public interface IMessageService
 {
     Task<IEnumerable<Message>> GetAll();
     Task<Message> GetById(int id);
-    Task<IEnumerable<Message>> GetAllMessagesSince(DateTime since);
+    Task<IEnumerable<Message>> GetAllMessagesSince(DateTime since, DateTime until);
     Task Create(Message message);
 }

@@ -1,4 +1,4 @@
-namespace CryptoTest.API.Hubs;
+namespace CryptoTest.API.Interfaces;
 
 public interface IChatClient
 {

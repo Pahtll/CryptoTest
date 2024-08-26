@@ -864,6 +864,7 @@
           "Microsoft.EntityFrameworkCore.Analyzers": "8.0.8",
           "Microsoft.EntityFrameworkCore.Relational": "8.0.8",
           "Microsoft.Extensions.Logging": "8.0.0",
+          "Npgsql": "8.0.3",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.4"
         },
         "compile": {
@@ -884,6 +885,7 @@
           "Microsoft.EntityFrameworkCore.Analyzers": "8.0.8",
           "Microsoft.EntityFrameworkCore.Relational": "8.0.8",
           "Microsoft.Extensions.Logging": "8.0.0",
+          "Npgsql": "8.0.3",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.4"
         },
         "compile": {
@@ -2444,7 +2446,8 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
-      "CryptoTest.Persistence >= 1.0.0"
+      "CryptoTest.Persistence >= 1.0.0",
+      "Npgsql >= 8.0.3"
     ]
   },
   "packageFolders": {
@@ -2492,6 +2495,12 @@
     "frameworks": {
       "net8.0": {
         "targetAlias": "net8.0",
+        "dependencies": {
+          "Npgsql": {
+            "target": "Package",
+            "version": "[8.0.3, )"
+          }
+        },
         "imports": [
           "net461",
           "net462",
