@@ -1,11 +1,15 @@
 using System.Data;
 using CryptoTest.Domain.Models;
-using CryptoTest.Persistence;
+using CryptoTest.Persistence.Interfaces;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 
-namespace Persistence.Repositories;
+namespace CryptoTest.Persistence.Repositories;
 
-public class MessageRepository(SqlDatabase sqlDatabase)
+public class MessageRepository(
+    SqlDatabase sqlDatabase,
+    ILogger<MessageRepository> logger
+    ) : IMessageRepository
 {
     public async Task<IEnumerable<Message>> GetAll()
     {
@@ -14,8 +18,10 @@ public class MessageRepository(SqlDatabase sqlDatabase)
         
         if(connection.State != ConnectionState.Open)
         {
+            logger.LogError("Connection is not open");
             throw new Exception("Connection is not open");
         }
+        logger.LogInformation("Connection to the database established");
         
         var createTableCommand = connection.CreateCommand();
         createTableCommand.CommandText = 
@@ -48,8 +54,10 @@ public class MessageRepository(SqlDatabase sqlDatabase)
         
         if(connection.State != ConnectionState.Open)
         {
+            logger.LogCritical("Connection is not open");
             throw new Exception("Connection is not open");
         }
+        logger.LogInformation("Connection to the database established, Fetching message with id {id}", id);
         
         var createTableCommand = connection.CreateCommand();
         createTableCommand.CommandText = 
@@ -82,8 +90,11 @@ public class MessageRepository(SqlDatabase sqlDatabase)
         
         if(connection.State != ConnectionState.Open)
         {
+            logger.LogCritical("Connection is not open");
             throw new Exception("Connection is not open");
         }
+        
+        logger.LogInformation("Connection to the database established, Fetching messages since {since}", since);
         
         var createTableCommand = connection.CreateCommand();
         createTableCommand.CommandText = 
@@ -132,5 +143,7 @@ public class MessageRepository(SqlDatabase sqlDatabase)
         command.Parameters.Add(new SqlParameter("@CreatedAt", SqlDbType.DateTime) { Value = message.SentAt });
 
         await command.ExecuteNonQueryAsync();
+        
+        logger.LogInformation("Message created");
     }
 }

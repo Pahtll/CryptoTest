@@ -1,4 +1,6 @@
 using CryptoTest.Persistence;
+using CryptoTest.Persistence.Interfaces;
+using CryptoTest.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,10 +11,14 @@ var loggerFactory = builder.Logging;
 
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
+
 loggerFactory.ClearProviders();
 loggerFactory.AddConsole();
+loggerFactory.AddDebug();
 
-services.AddSingleton(new SqlDatabase(configuration));
+services.AddSingleton(new SqlDatabase(connectionString));
+
+services.AddScoped<IMessageRepository, MessageRepository>();
 
 var app = builder.Build();
 

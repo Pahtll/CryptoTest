@@ -2,7 +2,7 @@ using CryptoTest.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Persistence.Configuration;
+namespace CryptoTest.Persistence.Configuration;
 
 public class MessageConfiguration : IEntityTypeConfiguration<Message>
 {
