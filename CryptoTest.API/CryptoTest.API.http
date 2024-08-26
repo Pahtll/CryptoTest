@@ -1,6 +1,0 @@
-@CryptoTest.API_HostAddress = http://localhost:5012
-
-GET {{CryptoTest.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

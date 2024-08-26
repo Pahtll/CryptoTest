@@ -1,0 +1,1 @@
+public record UserConnection(string username, string chatroom);
