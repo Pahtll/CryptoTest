@@ -19,7 +19,7 @@ public class MessageRepository(SqlDatabase sqlDatabase)
         
         var createTableCommand = connection.CreateCommand();
         createTableCommand.CommandText = 
-            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Content NVARCHAR(128), CreatedAt DATETIME)";
+            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Text NVARCHAR(128), SentAt DATETIME)";
 
         await createTableCommand.ExecuteNonQueryAsync();
         
@@ -53,7 +53,7 @@ public class MessageRepository(SqlDatabase sqlDatabase)
         
         var createTableCommand = connection.CreateCommand();
         createTableCommand.CommandText = 
-            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Content NVARCHAR(128), CreatedAt DATETIME)";
+            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Text NVARCHAR(128), SentAt DATETIME)";
         
         await createTableCommand.ExecuteNonQueryAsync();
 
@@ -75,7 +75,7 @@ public class MessageRepository(SqlDatabase sqlDatabase)
         throw new ArgumentException("Message not found");
     }
     
-    public async Task<List<Message>> GetAllMessagesSince(DateTime since)
+    public async Task<IEnumerable<Message>> GetAllMessagesSince(DateTime since)
     {
         await using var connection = sqlDatabase.GetConnection();
         await connection.OpenAsync();
@@ -87,7 +87,7 @@ public class MessageRepository(SqlDatabase sqlDatabase)
         
         var createTableCommand = connection.CreateCommand();
         createTableCommand.CommandText = 
-            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Content NVARCHAR(128), CreatedAt DATETIME)";
+            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Text NVARCHAR(128), SentAt DATETIME)";
         
         await createTableCommand.ExecuteNonQueryAsync();
 
@@ -122,14 +122,14 @@ public class MessageRepository(SqlDatabase sqlDatabase)
         
         var createTableCommand = connection.CreateCommand();
         createTableCommand.CommandText = 
-            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Content NVARCHAR(128), CreatedAt DATETIME)";
+            "CREATE TABLE IF NOT EXISTS Messages (Id INT PRIMARY KEY IDENTITY, Text NVARCHAR(128), SentAt DATETIME)";
         
         await createTableCommand.ExecuteNonQueryAsync();
 
         var command = connection.CreateCommand();
-        command.CommandText = "INSERT INTO Messages (Content, CreatedAt) VALUES (@Content, @CreatedAt)";
+        command.CommandText = "INSERT INTO Messages (Content, CreatedAt) VALUES (@Text, @SentAt)";
         command.Parameters.Add(new SqlParameter("@Content", SqlDbType.NVarChar) { Value = message.Text });
-        command.Parameters.Add(new SqlParameter("@CreatedAt", SqlDbType.DateTime) { Value = message.Text });
+        command.Parameters.Add(new SqlParameter("@CreatedAt", SqlDbType.DateTime) { Value = message.SentAt });
 
         await command.ExecuteNonQueryAsync();
     }
