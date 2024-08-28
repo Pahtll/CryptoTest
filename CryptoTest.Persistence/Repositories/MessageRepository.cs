@@ -68,7 +68,7 @@ public class MessageRepository(
 
         var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM Messages WHERE Id = @Id";
-        command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = id });
+        command.Parameters.Add(new NpgsqlParameter("@Id", NpgsqlTypes.NpgsqlDbType.Integer) { Value = id });
 
         await using var reader = await command.ExecuteReaderAsync();
         if (await reader.ReadAsync())
@@ -105,8 +105,8 @@ public class MessageRepository(
         
         var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM Messages WHERE SentAt >= @Since AND SentAt <= @Until";
-        command.Parameters.Add(new SqlParameter("@Since", SqlDbType.DateTime) { Value = since });
-        command.Parameters.Add(new SqlParameter("@Until", SqlDbType.DateTime) { Value = until });
+        command.Parameters.Add(new NpgsqlParameter("@Since", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = since });
+        command.Parameters.Add(new NpgsqlParameter("@Until", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = until });
         
         var messages = new List<Message>();
         await using var reader = await command.ExecuteReaderAsync();
