@@ -24,6 +24,10 @@ public static class MessageEndpoint
             var messages = await messageService.GetAll();
             return Results.Ok(messages);
         }
+        catch (ArgumentException argumentException)
+        {
+            return Results.BadRequest(argumentException.Message);
+        }
         catch (Exception e)
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
@@ -79,6 +83,10 @@ public static class MessageEndpoint
             };
             await messageService.Create(message);
             return Results.Created($"/messages/{message.Id}", message);
+        }
+        catch (ArgumentException argumentException)
+        {
+            return Results.BadRequest(argumentException.Message);
         }
         catch (Exception e)
         {

@@ -18,6 +18,11 @@ public class MessageService(
         {
             return await messageRepository.GetAll();
         }
+        catch (ArgumentException e)
+        {
+            logger.LogError("Messages are not found");
+            throw new ArgumentException("Messages are not found");
+        }
         catch (Exception e)
         {
             logger.LogError(e, "An error occurred while fetching all messages");
@@ -30,6 +35,11 @@ public class MessageService(
         try
         {
             return await messageRepository.GetById(id);
+        }
+        catch (ArgumentException e)
+        {
+            logger.LogError(e, "Message doesn't exists");
+            throw new ArgumentException("Message doesn't exists");
         }
         catch (Exception e)
         {
@@ -65,10 +75,15 @@ public class MessageService(
             logger.LogError("Until is greater than now");
             throw new ArgumentException("Until is greater than now");
         }
-        
+
         try
         {
             return await messageRepository.GetAllMessagesSince(since, until);
+        }
+        catch (ArgumentException e)
+        {
+            logger.LogError(e, "Messages isn't found");
+            throw new ArgumentException("Messages isn't found"); 
         }
         catch (Exception e)
         {
@@ -100,10 +115,15 @@ public class MessageService(
             logger.LogError("Message sent at is default");
             throw new ArgumentException("Message sent at is default");
         }
-        
+
         try
         {
             await messageRepository.CreateMessage(message);
+        }
+        catch (ArgumentException e)
+        {
+            logger.LogError(e, "Message is not created");
+            throw new ArgumentException("Message is not created");
         }
         catch (Exception e)
         {
