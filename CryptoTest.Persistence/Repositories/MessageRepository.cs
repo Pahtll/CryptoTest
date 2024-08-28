@@ -135,7 +135,7 @@ public class MessageRepository(
         
         var createTableCommand = connection.CreateCommand();
         createTableCommand.CommandText = 
-            "CREATE TABLE IF NOT EXISTS Messages (Id SERIAL PRIMARY KEY IDENTITY, Text VARCHAR(128), SentAt TIMESTAMP)";
+            "CREATE TABLE IF NOT EXISTS Messages (Id SERIAL PRIMARY KEY, Text VARCHAR(128), SentAt TIMESTAMP)";
         
         await createTableCommand.ExecuteNonQueryAsync();
 
