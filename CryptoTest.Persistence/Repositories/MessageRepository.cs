@@ -140,9 +140,9 @@ public class MessageRepository(
         await createTableCommand.ExecuteNonQueryAsync();
 
         var command = connection.CreateCommand();
-        command.CommandText = "INSERT INTO Messages (Content, CreatedAt) VALUES (@Text, @SentAt)";
-        command.Parameters.Add(new SqlParameter("@Content", SqlDbType.NVarChar) { Value = message.Text });
-        command.Parameters.Add(new SqlParameter("@CreatedAt", SqlDbType.DateTime) { Value = message.SentAt });
+        command.CommandText = "INSERT INTO Messages (Text, SentAt) VALUES (@Text, @SentAt)";
+        command.Parameters.Add(new NpgsqlParameter("@Text", NpgsqlTypes.NpgsqlDbType.Varchar) { Value = message.Text });
+        command.Parameters.Add(new NpgsqlParameter("@SentAt", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = message.SentAt });
 
         await command.ExecuteNonQueryAsync();
         
