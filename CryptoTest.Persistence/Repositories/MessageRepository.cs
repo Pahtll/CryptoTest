@@ -1,7 +1,6 @@
 using System.Data;
 using CryptoTest.Domain.Models;
 using CryptoTest.Persistence.Interfaces;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 
@@ -68,7 +67,8 @@ public class MessageRepository(
 
         var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM Messages WHERE Id = @Id";
-        command.Parameters.Add(new NpgsqlParameter("@Id", NpgsqlTypes.NpgsqlDbType.Integer) { Value = id });
+        command.Parameters.Add(
+            new NpgsqlParameter("@Id", NpgsqlTypes.NpgsqlDbType.Integer) { Value = id });
 
         await using var reader = await command.ExecuteReaderAsync();
         if (await reader.ReadAsync())
@@ -105,8 +105,10 @@ public class MessageRepository(
         
         var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM Messages WHERE SentAt >= @Since AND SentAt <= @Until";
-        command.Parameters.Add(new NpgsqlParameter("@Since", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = since });
-        command.Parameters.Add(new NpgsqlParameter("@Until", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = until });
+        command.Parameters.Add(
+            new NpgsqlParameter("@Since", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = since });
+        command.Parameters.Add(
+            new NpgsqlParameter("@Until", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = until });
         
         var messages = new List<Message>();
         await using var reader = await command.ExecuteReaderAsync();
@@ -123,7 +125,7 @@ public class MessageRepository(
         return messages;
     }
 
-    public async Task CreateMessage(Message message)
+    public async Task<int> CreateMessage(Message message)
     {
         await using var connection = sqlDatabase.GetConnection();
         await connection.OpenAsync();
@@ -141,11 +143,21 @@ public class MessageRepository(
 
         var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO Messages (Text, SentAt) VALUES (@Text, @SentAt)";
-        command.Parameters.Add(new NpgsqlParameter("@Text", NpgsqlTypes.NpgsqlDbType.Varchar) { Value = message.Text });
-        command.Parameters.Add(new NpgsqlParameter("@SentAt", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = message.SentAt });
+        command.Parameters.Add(
+            new NpgsqlParameter("@Text", NpgsqlTypes.NpgsqlDbType.Varchar) { Value = message.Text });
+        command.Parameters.Add(
+            new NpgsqlParameter("@SentAt", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = message.SentAt });
 
         await command.ExecuteNonQueryAsync();
         
         logger.LogInformation("Message created");
+
+        var lastInsertedIdCommand = connection.CreateCommand();
+        lastInsertedIdCommand.CommandText = "SELECT lastval()";
+        var lastInsertedIdLong = (long) (await lastInsertedIdCommand.ExecuteScalarAsync()
+                                        ?? throw new Exception("Last inserted id is null"));
+        var lastInsertedId = Convert.ToInt32(lastInsertedIdLong);
+        
+        return lastInsertedId;
     }
 }

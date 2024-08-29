@@ -15,5 +15,5 @@ public interface IMessageRepository
     Task<IEnumerable<Message>> GetAll();
     Task<Message> GetById(int id);
     Task<IEnumerable<Message>> GetAllMessagesSince(DateTime since, DateTime until);
-    Task CreateMessage(Message message);
+    Task<int> CreateMessage(Message message);
 }

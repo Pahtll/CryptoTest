@@ -9,10 +9,10 @@ public static class MessageEndpoint
 {
     public static IEndpointRouteBuilder MapMessageEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/messages", GetAllMessages);
+        app.MapGet("/messages/all", GetAllMessages);
         app.MapGet("/messages/{id:int}", GetMessageById);
         app.MapGet("/messages/since", GetAllMessagesSince);
-        app.MapPost("/messages", CreateMessage);
+        app.MapPost("/messages/create", CreateMessage);
         
         return app;
     }
@@ -28,7 +28,7 @@ public static class MessageEndpoint
         {
             return Results.BadRequest(argumentException.Message);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -45,7 +45,7 @@ public static class MessageEndpoint
         {
             return Results.BadRequest(argumentException.Message);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -64,7 +64,7 @@ public static class MessageEndpoint
         {
             return Results.BadRequest(argumentException.Message);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -81,14 +81,14 @@ public static class MessageEndpoint
                 Text = text,
                 SentAt = DateTime.Now
             };
-            await messageService.Create(message);
+            message.Id = await messageService.Create(message);
             return Results.Created($"/messages/{message.Id}", message);
         }
         catch (ArgumentException argumentException)
         {
             return Results.BadRequest(argumentException.Message);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }

@@ -92,7 +92,7 @@ public class MessageService(
         }
     }
     
-    public async Task Create(Message message)
+    public async Task<int> Create(Message message)
     {
         if (message == null)
         {
@@ -118,7 +118,7 @@ public class MessageService(
 
         try
         {
-            await messageRepository.CreateMessage(message);
+            return await messageRepository.CreateMessage(message);
         }
         catch (ArgumentException e)
         {

@@ -7,5 +7,5 @@ public interface IMessageService
     Task<IEnumerable<Message>> GetAll();
     Task<Message> GetById(int id);
     Task<IEnumerable<Message>> GetAllMessagesSince(DateTime since, DateTime until);
-    Task Create(Message message);
+    Task<int> Create(Message message);
 }
