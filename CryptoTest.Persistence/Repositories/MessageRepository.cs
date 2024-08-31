@@ -3,6 +3,7 @@ using CryptoTest.Domain.Models;
 using CryptoTest.Persistence.Interfaces;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace CryptoTest.Persistence.Repositories;
 
@@ -68,7 +69,7 @@ public class MessageRepository(
         var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM Messages WHERE Id = @Id";
         command.Parameters.Add(
-            new NpgsqlParameter("@Id", NpgsqlTypes.NpgsqlDbType.Integer) { Value = id });
+            new NpgsqlParameter("@Id", NpgsqlDbType.Integer) { Value = id });
 
         await using var reader = await command.ExecuteReaderAsync();
         if (await reader.ReadAsync())
@@ -106,9 +107,9 @@ public class MessageRepository(
         var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM Messages WHERE SentAt >= @Since AND SentAt <= @Until";
         command.Parameters.Add(
-            new NpgsqlParameter("@Since", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = since });
+            new NpgsqlParameter("@Since", NpgsqlDbType.Timestamp) { Value = since });
         command.Parameters.Add(
-            new NpgsqlParameter("@Until", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = until });
+            new NpgsqlParameter("@Until", NpgsqlDbType.Timestamp) { Value = until });
         
         var messages = new List<Message>();
         await using var reader = await command.ExecuteReaderAsync();
@@ -144,9 +145,9 @@ public class MessageRepository(
         var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO Messages (Text, SentAt) VALUES (@Text, @SentAt)";
         command.Parameters.Add(
-            new NpgsqlParameter("@Text", NpgsqlTypes.NpgsqlDbType.Varchar) { Value = message.Text });
+            new NpgsqlParameter("@Text", NpgsqlDbType.Varchar) { Value = message.Text });
         command.Parameters.Add(
-            new NpgsqlParameter("@SentAt", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = message.SentAt });
+            new NpgsqlParameter("@SentAt", NpgsqlDbType.Timestamp) { Value = message.SentAt });
 
         await command.ExecuteNonQueryAsync();
         

@@ -10,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
 var configuration = builder.Configuration;
-var defaultConnection = configuration.GetConnectionString("DefaultConnection");
 var redisConnection = configuration.GetConnectionString("RedisConnection");
 var loggerFactory = builder.Logging;
 
@@ -29,9 +28,10 @@ services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin() // TODO: Change this to a specific origin
+        policy.WithOrigins("http://localhost:3000")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 

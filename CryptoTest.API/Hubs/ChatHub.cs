@@ -24,7 +24,7 @@ public class ChatHub(
         
         await Clients
             .Group(connection.Chatroom)
-            .ReceiveMessage("Admin", $"{connection.Username} has joined the chatroom");
+            .ReceiveMessage("someone", "Someone has joined the chatroom");
     }
 
     public async Task SendMessage(string text)
@@ -66,7 +66,7 @@ public class ChatHub(
         
         await Clients
             .Group(connection.Chatroom)
-            .ReceiveMessage("Admin", $"{connection.Username} has left the chatroom");
+            .ReceiveMessage("Someone", "Someone has left the chatroom");
         
         await base.OnDisconnectedAsync(exception);
     }
