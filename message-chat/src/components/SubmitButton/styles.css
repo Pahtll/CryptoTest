@@ -1,0 +1,21 @@
+.submitButton {
+  position: absolute;
+  padding: 0;
+  transform: scale(1.4);
+  border: none;
+  transition: all 0.3s ease-in-out;
+  background-color: rgba(0, 0, 0, 0);
+  margin-right: 15px;
+  margin-top: 5px;
+}
+
+.submitButton:hover:not(:disabled) {
+  opacity: 60%;
+}
+
+.submitButton:active:not(:disabled) {
+  opacity: 100%;
+}
+.submitButton:focus {
+  outline: none;
+}

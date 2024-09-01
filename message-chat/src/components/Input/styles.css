@@ -1,0 +1,44 @@
+* {
+  box-sizing: border-box;
+}
+
+.form {
+  flex-grow: 0;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: end;
+  box-sizing: border-box;
+}
+
+.PromptInput {
+  outline: none;
+  transition: border-color 0.3s ease-in-out;
+  height: 3em;
+  border-radius: 1em;
+  font-size: 15px;
+  width: 47vw;
+  border: 1px solid #00000079;
+  padding-left: 1.5em;
+  padding-right: 2em;
+  padding-top: 0.8em;
+  padding-bottom: 0.8em;
+  resize: none;
+  overflow-y: auto;
+  margin: 0;
+  white-space: pre-wrap;
+  min-width: 300px;
+}
+
+.PromptInput:hover:not(:disabled),
+:focus:not(:disabled) {
+  border-color: #3aa6d0;
+}
+
+.PromptInput::-webkit-scrollbar {
+  width: 0;
+}
+
+.PromptInput > .submitButton {
+  justify-content: flex-end;
+}
