@@ -79,7 +79,7 @@ public static class MessageEndpoint
             var message = new Message
             {
                 Text = text,
-                SentAt = DateTime.Now
+                SentAt = DateTime.UtcNow
             };
             message.Id = await messageService.Create(message);
             return Results.Created($"/messages/{message.Id}", message);

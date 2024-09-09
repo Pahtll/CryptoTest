@@ -12,9 +12,17 @@ public class MessageRepository(
     ILogger<MessageRepository> logger
     ) : IMessageRepository
 {
-    public async Task<IEnumerable<Message>> GetAll()
+    private async Task CreateTableIfNotExists(NpgsqlConnection connection)
     {
-        await using var connection = sqlDatabase.GetConnection();
+        var createTableCommand = connection.CreateCommand();
+        createTableCommand.CommandText = 
+            "CREATE TABLE IF NOT EXISTS Messages (Id SERIAL PRIMARY KEY, Text VARCHAR(128), SentAt TIMESTAMP)";
+        await createTableCommand.ExecuteNonQueryAsync();
+    }
+
+    private async Task<NpgsqlConnection> GetDbConnection()
+    {
+        var connection = sqlDatabase.GetConnection();
         await connection.OpenAsync();
         
         if(connection.State != ConnectionState.Open)
@@ -22,13 +30,17 @@ public class MessageRepository(
             logger.LogError("Connection is not open");
             throw new Exception("Connection is not open");
         }
+        
         logger.LogInformation("Connection to the database established");
         
-        var createTableCommand = connection.CreateCommand();
-        createTableCommand.CommandText = 
-            "CREATE TABLE IF NOT EXISTS Messages (Id SERIAL PRIMARY KEY, Text VARCHAR(128), SentAt TIMESTAMP)";
+        return connection;
+    }
+    
+    public async Task<IEnumerable<Message>> GetAll()
+    {
+        await using var connection = await GetDbConnection();
 
-        await createTableCommand.ExecuteNonQueryAsync();
+        await CreateTableIfNotExists(connection);
         
         var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM Messages";
@@ -50,21 +62,9 @@ public class MessageRepository(
 
     public async Task<Message> GetById(int id)
     {
-        await using var connection = sqlDatabase.GetConnection();
-        await connection.OpenAsync();
+        await using var connection = await GetDbConnection();
         
-        if(connection.State != ConnectionState.Open)
-        {
-            logger.LogCritical("Connection is not open");
-            throw new Exception("Connection is not open");
-        }
-        logger.LogInformation("Connection to the database established, Fetching message with id {id}", id);
-        
-        var createTableCommand = connection.CreateCommand();
-        createTableCommand.CommandText = 
-            "CREATE TABLE IF NOT EXISTS Messages (Id SERIAL PRIMARY KEY, Text VARCHAR(128), SentAt TIMESTAMP)";
-        
-        await createTableCommand.ExecuteNonQueryAsync();
+        await CreateTableIfNotExists(connection);
 
         var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM Messages WHERE Id = @Id";
@@ -87,22 +87,9 @@ public class MessageRepository(
     
     public async Task<IEnumerable<Message>> GetAllMessagesSince(DateTime since, DateTime until)
     {
-        await using var connection = sqlDatabase.GetConnection();
-        await connection.OpenAsync();
+        await using var connection = await GetDbConnection();
         
-        if(connection.State != ConnectionState.Open)
-        {
-            logger.LogCritical("Connection is not open");
-            throw new Exception("Connection is not open");
-        }
-        
-        logger.LogInformation("Connection to the database established, Fetching messages since {since}", since);
-        
-        var createTableCommand = connection.CreateCommand();
-        createTableCommand.CommandText = 
-            "CREATE TABLE IF NOT EXISTS Messages (Id SERIAL PRIMARY KEY, Text VARCHAR(128), SentAt TIMESTAMP)";
-        
-        await createTableCommand.ExecuteNonQueryAsync();
+        await CreateTableIfNotExists(connection);
         
         var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM Messages WHERE SentAt >= @Since AND SentAt <= @Until";
@@ -128,19 +115,9 @@ public class MessageRepository(
 
     public async Task<int> CreateMessage(Message message)
     {
-        await using var connection = sqlDatabase.GetConnection();
-        await connection.OpenAsync();
+        await using var connection = await GetDbConnection();
         
-        if(connection.State != ConnectionState.Open)
-        {
-            throw new Exception("Connection is not open");
-        }
-        
-        var createTableCommand = connection.CreateCommand();
-        createTableCommand.CommandText = 
-            "CREATE TABLE IF NOT EXISTS Messages (Id SERIAL PRIMARY KEY, Text VARCHAR(128), SentAt TIMESTAMP)";
-        
-        await createTableCommand.ExecuteNonQueryAsync();
+        await CreateTableIfNotExists(connection);
 
         var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO Messages (Text, SentAt) VALUES (@Text, @SentAt)";
